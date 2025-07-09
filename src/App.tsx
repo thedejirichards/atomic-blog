@@ -1,10 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
-import type {
-  PostContextProps,
-  PostProp,
-  SearchPosts,
-} from "./types";
+import type { PostContextProps, PostProp, SearchPosts } from "./types";
 
 function createRandomPost() {
   return {
@@ -66,8 +62,8 @@ function App() {
           {isFakeDark ? "☀️" : "🌙"}
         </button>
         <Header />
-        <Main  />
-        <Archive onAddPost={handleAddPost} />
+        <Main />
+        <Archive />
         <Footer />
       </section>
     </PostContext.Provider>
@@ -122,12 +118,9 @@ function Main() {
 }
 
 function Posts() {
-  const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
-  const { posts } = context;
   return (
     <section>
-      <List posts={posts} />
+      <List />
     </section>
   );
 }
@@ -163,7 +156,10 @@ function FormAddPost() {
   );
 }
 
-function List({ posts }: { posts: PostProp[] }) {
+function List() {
+  const context = useContext(PostContext);
+  if (!context) throw new Error("PostContext is missing");
+  const { posts } = context;
   return (
     <ul>
       {posts.map((post, i) => (
@@ -176,7 +172,7 @@ function List({ posts }: { posts: PostProp[] }) {
   );
 }
 
-function Archive({ onAddPost }: { onAddPost: (post: PostProp) => void }) {
+function Archive() {
   // Here we don't need the setter function. We're only using state to store these posts because the callback function passed into useState (which generates the posts) is only called once, on the initial render. So we use this trick as an optimization technique, because if we just used a regular variable, these posts would be re-created on every render. We could also move the posts outside the components, but I wanted to show you this trick 😉
   const [posts] = useState(() =>
     // 💥 WARNING: This might make your computer slow! Try a smaller `length` first
@@ -184,7 +180,9 @@ function Archive({ onAddPost }: { onAddPost: (post: PostProp) => void }) {
   );
 
   const [showArchive, setShowArchive] = useState(false);
-
+  const context = useContext(PostContext);
+  if (!context) throw new Error("PostContext is missing");
+  const { onAddPost } = context;
   return (
     <aside>
       <h2>Post archive</h2>
