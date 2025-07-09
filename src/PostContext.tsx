@@ -11,7 +11,7 @@ function createRandomPost() {
   };
 }
 
-function PostProvider({children}: {children: React.ReactNode}) {
+function PostProvider({ children }: { children: React.ReactNode }) {
   const [posts, setPosts] = useState<PostProp[]>(() =>
     Array.from({ length: 30 }, () => createRandomPost())
   );
@@ -49,11 +49,12 @@ function PostProvider({children}: {children: React.ReactNode}) {
   );
 }
 
-function usePostContext() {
+function usePosts() {
   const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
-  // const { onClearPosts } = context;
+  if (!context)
+    throw new Error("PostContext was used outside the post context provider");
+  return context;
 }
 
 /* eslint-disable react-refresh/only-export-components */
-export { PostProvider, PostContext, usePostContext };
+export { PostProvider, PostContext, usePosts };

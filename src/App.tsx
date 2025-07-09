@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
 import type { SearchPosts } from "./types";
-import { PostProvider, PostContext } from "./PostContext";
+import { PostProvider, usePosts } from "./PostContext";
 
 function createRandomPost() {
   return {
@@ -21,25 +21,25 @@ function App() {
   );
 
   return (
-    <PostProvider>
-      <section>
-        <button
-          onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
-          className="btn-fake-dark-mode"
-        >
-          {isFakeDark ? "☀️" : "🌙"}
-        </button>
+    <section>
+      <button
+        onClick={() => setIsFakeDark((isFakeDark) => !isFakeDark)}
+        className="btn-fake-dark-mode"
+      >
+        {isFakeDark ? "☀️" : "🌙"}
+      </button>
+      <PostProvider>
         <Header />
         <Main />
         <Archive />
         <Footer />
-      </section>
-    </PostProvider>
+      </PostProvider>
+    </section>
   );
 }
 
 function Header() {
-  const context = useContext(PostContext);
+  const context = usePosts();
   if (!context) throw new Error("PostContext is missing");
   const { onClearPosts } = context;
   return (
@@ -57,8 +57,7 @@ function Header() {
 }
 
 function SearchPosts() {
-  const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
+  const context = usePosts();
   const { searchQuery, setSearchQuery } = context;
   return (
     <input
@@ -70,8 +69,7 @@ function SearchPosts() {
 }
 
 function Results() {
-  const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
+  const context = usePosts();
   const { posts } = context;
   return <p>🚀 {posts.length} atomic posts found</p>;
 }
@@ -96,8 +94,7 @@ function Posts() {
 function FormAddPost() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
+  const context = usePosts();
   const { onAddPost } = context;
   const handleSubmit = function (e: React.FormEvent) {
     e.preventDefault();
@@ -125,8 +122,7 @@ function FormAddPost() {
 }
 
 function List() {
-  const context = useContext(PostContext);
-  if (!context) throw new Error("PostContext is missing");
+  const context = usePosts();
   const { posts } = context;
   return (
     <ul>
@@ -148,7 +144,7 @@ function Archive() {
   );
 
   const [showArchive, setShowArchive] = useState(false);
-  const context = useContext(PostContext);
+  const context = usePosts();
   if (!context) throw new Error("PostContext is missing");
   const { onAddPost } = context;
   return (
