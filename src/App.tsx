@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
 import type {
-  MainPosts,
   PostContextProps,
   PostProp,
   SearchPosts,
@@ -67,7 +66,7 @@ function App() {
           {isFakeDark ? "☀️" : "🌙"}
         </button>
         <Header />
-        <Main posts={searchedPosts} onAddPost={handleAddPost} />
+        <Main  />
         <Archive onAddPost={handleAddPost} />
         <Footer />
       </section>
@@ -113,16 +112,19 @@ function Results() {
   return <p>🚀 {posts.length} atomic posts found</p>;
 }
 
-function Main({ posts, onAddPost }: MainPosts) {
+function Main() {
   return (
     <main>
-      <FormAddPost onAddPost={onAddPost} />
-      <Posts posts={posts} />
+      <FormAddPost />
+      <Posts />
     </main>
   );
 }
 
-function Posts({ posts }: { posts: PostProp[] }) {
+function Posts() {
+  const context = useContext(PostContext);
+  if (!context) throw new Error("PostContext is missing");
+  const { posts } = context;
   return (
     <section>
       <List posts={posts} />
@@ -130,10 +132,12 @@ function Posts({ posts }: { posts: PostProp[] }) {
   );
 }
 
-function FormAddPost({ onAddPost }: { onAddPost: (post: PostProp) => void }) {
+function FormAddPost() {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-
+  const context = useContext(PostContext);
+  if (!context) throw new Error("PostContext is missing");
+  const { onAddPost } = context;
   const handleSubmit = function (e: React.FormEvent) {
     e.preventDefault();
     if (!body || !title) return;
